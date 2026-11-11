@@ -9,13 +9,13 @@
 :root{--bg:#070800;--panel:#13150a;--line:#2c3312;--lime:#BBEB00;--text:#f3f8e2;--mute:#97a072}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next","Segoe UI",Roboto,sans-serif;overflow:hidden}
-body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,0);
+body{overflow-y:auto;display:flex;flex-direction:column;max-width:480px;margin:0 auto;padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,0);
 background:radial-gradient(120% 60% at 50% 38%,#26330a 0%,var(--bg) 70%)}
 .top{text-align:center;padding-top:18px}
 .bal{font-size:44px;font-weight:800;color:var(--lime);font-variant-numeric:tabular-nums;letter-spacing:.5px;line-height:1}
 .rate{color:var(--mute);font-size:14px;margin-top:6px}
-.stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
-#coin{width:min(62vw,270px);aspect-ratio:1;touch-action:manipulation;cursor:pointer;transition:transform .09s ease-out;filter:drop-shadow(0 18px 34px rgba(187,235,0,.32))}
+.stage{flex:1 0 190px;display:flex;align-items:center;justify-content:center;position:relative;container-type:size;padding:8px 0}
+#coin{width:min(62vw,270px,28vh);width:min(62cqw,270px,92cqh);aspect-ratio:1;flex:none;touch-action:manipulation;cursor:pointer;transition:transform .09s ease-out;filter:drop-shadow(0 18px 34px rgba(187,235,0,.32))}
 #coin.hit{transform:scale(.93)}
 #coin svg{width:100%;height:100%;display:block}
 .fly{position:fixed;pointer-events:none;font-weight:800;font-size:26px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.9);animation:fly .8s ease-out forwards}
@@ -31,7 +31,7 @@ background:radial-gradient(120% 60% at 50% 38%,#26330a 0%,var(--bg) 70%)}
 .up button{flex:none;min-width:96px;border:0;border-radius:10px;padding:10px 12px;font:700 14px inherit;font-family:inherit;color:#0b0d00;background:var(--lime);cursor:pointer}
 .up button:disabled{background:#242a10;color:#6c7550;cursor:default}
 .up button:active:not(:disabled){transform:scale(.96)}
-@media (max-height:700px){.bal{font-size:36px}#coin{width:min(50vw,210px)}.up{padding:7px 10px}}
+@media (max-height:760px){.top{padding-top:10px}.bal{font-size:34px}.rate{margin-top:3px}.shop{gap:6px;padding-bottom:10px}.up{padding:6px 10px}.up b{font-size:14px}.up span{font-size:11.5px}.up button{padding:8px 10px}}
 </style>
 </head>
 <body>
