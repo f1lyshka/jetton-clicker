@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Jetton Clicker</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#070800;--panel:#13150a;--line:#2c3312;--lime:#BBEB00;--text:#f3f8e2;--mute:#97a072}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:"Avenir Next","Segoe UI",Roboto,sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,0);
+background:radial-gradient(120% 60% at 50% 38%,#26330a 0%,var(--bg) 70%)}
+.top{text-align:center;padding-top:18px}
+.bal{font-size:44px;font-weight:800;color:var(--lime);font-variant-numeric:tabular-nums;letter-spacing:.5px;line-height:1}
+.rate{color:var(--mute);font-size:14px;margin-top:6px}
+.stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+#coin{width:min(62vw,270px);aspect-ratio:1;touch-action:manipulation;cursor:pointer;transition:transform .09s ease-out;filter:drop-shadow(0 18px 34px rgba(187,235,0,.32))}
+#coin.hit{transform:scale(.93)}
+#coin svg{width:100%;height:100%;display:block}
+.fly{position:fixed;pointer-events:none;font-weight:800;font-size:26px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.9);animation:fly .8s ease-out forwards}
+@keyframes fly{to{transform:translateY(-90px);opacity:0}}
+.energy{margin:6px 0 12px}
+.ebar{height:10px;border-radius:6px;background:var(--panel);border:1px solid var(--line);overflow:hidden}
+.ebar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8fb800,#d6ff3a);transition:width .15s}
+.elab{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-top:5px}
+.shop{display:grid;gap:8px;padding-bottom:14px}
+.up{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.up b{display:block;font-size:15px}
+.up span{color:var(--mute);font-size:12.5px}
+.up button{flex:none;min-width:96px;border:0;border-radius:10px;padding:10px 12px;font:700 14px inherit;font-family:inherit;color:#0b0d00;background:var(--lime);cursor:pointer}
+.up button:disabled{background:#242a10;color:#6c7550;cursor:default}
+.up button:active:not(:disabled){transform:scale(.96)}
+@media (max-height:700px){.bal{font-size:36px}#coin{width:min(50vw,210px)}.up{padding:7px 10px}}
+</style>
+</head>
+<body>
+<div class="top"><div class="bal" id="bal">0</div><div class="rate" id="rate"></div></div>
+
+<div class="stage">
+  <div id="coin">
+    <svg viewBox="0 0 200 200" aria-label="Jetton coin">
+      <defs>
+        <radialGradient id="face" cx="50%" cy="35%" r="75%"><stop offset="0" stop-color="#e2ff5c"/><stop offset=".6" stop-color="#BBEB00"/><stop offset="1" stop-color="#8db300"/></radialGradient>
+        <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdf51a"/><stop offset="1" stop-color="#7fa300"/></linearGradient>
+        <linearGradient id="crown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2000"/><stop offset="1" stop-color="#050600"/></linearGradient>
+        <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#f4ffb0" flood-opacity=".55"/></filter>
+      </defs>
+      <circle cx="100" cy="100" r="97" fill="#566d00"/>
+      <circle cx="100" cy="100" r="94" fill="url(#rim)"/>
+      <g id="stripes" fill="#fff"><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(0 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(45 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(90 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(135 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(180 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(225 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(270 100 100)"/><rect x="93" y="8" width="14" height="17" rx="4" transform="rotate(315 100 100)"/></g>
+      <circle cx="100" cy="100" r="71" fill="#6f8f00"/>
+      <circle cx="100" cy="100" r="68" fill="url(#face)"/>
+      <circle cx="100" cy="100" r="68" fill="none" stroke="#f1ffa0" stroke-opacity=".6" stroke-width="1.5"/>
+      <g filter="url(#sh)" fill="url(#crown)" transform="translate(100 100) scale(.4) translate(-320 -220)">
+        <path d="M305 167 L432 189 L207 272 L362 200 Z"/>
+        <path d="M371 228 L330 240 L333 268 Z"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div class="energy">
+  <div class="ebar"><i id="ebar"></i></div>
+  <div class="elab"><span id="etxt"></span><span id="ereg"></span></div>
+</div>
+<div class="shop" id="shop"></div>
+
+<script>
+const tg = window.Telegram && Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor('#070800'); tg.setBackgroundColor('#070800'); } catch(e){} }
+
+const UPS = [
+  {id:'tap',   name:'Сила клика',   base:50,  mul:1.55, desc:l=>`+1 монета за тап (сейчас ${1+l})`},
+  {id:'auto',  name:'Автокликер',   base:150, mul:1.6,  desc:l=>`+1 монета в секунду (сейчас ${l})`},
+  {id:'max',   name:'Запас энергии',base:100, mul:1.5,  desc:l=>`+50 к лимиту (сейчас ${500+50*l})`},
+  {id:'regen', name:'Восстановление',base:200,mul:1.7,  desc:l=>`+1 энергии в секунду (сейчас ${1+l})`}
+];
+let S = {coins:0, lv:{tap:0,auto:0,max:0,regen:0}, energy:500, t:Date.now()};
+
+const perTap = () => 1 + S.lv.tap;
+const perSec = () => S.lv.auto;
+const maxE   = () => 500 + 50*S.lv.max;
+const regen  = () => 1 + S.lv.regen;
+const cost   = u => Math.floor(u.base * Math.pow(u.mul, S.lv[u.id]));
+
+function fmt(n){
+  n = Math.floor(n);
+  if (n >= 1e9) return (n/1e9).toFixed(2)+'B';
+  if (n >= 1e6) return (n/1e6).toFixed(2)+'M';
+  return n.toLocaleString('ru-RU');
+}
+
+/* ---------- сохранение ---------- */
+let saveTimer = null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    S.t = Date.now();
+    const s = JSON.stringify(S);
+    try { localStorage.setItem('jc', s); } catch(e){}
+    try { tg && tg.CloudStorage && tg.CloudStorage.setItem('jc', s); } catch(e){}
+  }, 800);
+}
+function applySave(raw){
+  try {
+    const d = JSON.parse(raw);
+    if (d && d.lv) { S = Object.assign(S, d); S.lv = Object.assign({tap:0,auto:0,max:0,regen:0}, d.lv); }
+  } catch(e){}
+  S.energy = Math.min(S.energy, maxE());
+  buildShop(); render();
+}
+function load(){
+  let local = null;
+  try { local = localStorage.getItem('jc'); } catch(e){}
+  if (tg && tg.CloudStorage) {
+    try { tg.CloudStorage.getItem('jc', (err, v) => applySave(!err && v ? v : local)); return; } catch(e){}
+  }
+  applySave(local);
+}
+
+/* ---------- интерфейс ---------- */
+const $ = id => document.getElementById(id);
+function buildShop(){
+  $('shop').innerHTML = UPS.map(u => `<div class="up"><div><b>${u.name}</b><span id="d_${u.id}"></span></div><button id="b_${u.id}"></button></div>`).join('');
+  UPS.forEach(u => $('b_'+u.id).addEventListener('click', () => buy(u)));
+}
+function render(){
+  $('bal').textContent = fmt(S.coins);
+  $('rate').textContent = `+${fmt(perSec())} в секунду · +${perTap()} за тап`;
+  $('ebar').style.width = (S.energy / maxE() * 100) + '%';
+  $('etxt').textContent = `Энергия ${Math.floor(S.energy)} / ${maxE()}`;
+  $('ereg').textContent = `+${regen()} в секунду`;
+  UPS.forEach(u => {
+    const b = $('b_'+u.id); if (!b) return;
+    const c = cost(u);
+    b.textContent = fmt(c);
+    b.disabled = S.coins < c;
+    $('d_'+u.id).textContent = `Уровень ${S.lv[u.id]} · ` + u.desc(S.lv[u.id]);
+  });
+}
+function buy(u){
+  const c = cost(u);
+  if (S.coins < c) return;
+  S.coins -= c; S.lv[u.id]++;
+  if (u.id === 'max') S.energy += 50;
+  haptic('medium'); render(); save();
+}
+function haptic(kind){ try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred(kind); } catch(e){} }
+
+/* ---------- клик по монете ---------- */
+const coin = $('coin'), stripes = $('stripes');
+let angle = 0, vel = 0;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BASE = reduce ? 0 : 40;           // градусов в секунду
+vel = BASE;
+
+coin.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (S.energy < 1) { haptic('light'); return; }
+  S.energy -= 1; S.coins += perTap();
+  vel = Math.min(vel + 260, 900);        // полосы раскручиваются от тапа
+  coin.classList.add('hit'); setTimeout(() => coin.classList.remove('hit'), 90);
+  const f = document.createElement('div');
+  f.className = 'fly'; f.textContent = '+' + perTap();
+  f.style.left = (e.clientX - 14) + 'px'; f.style.top = (e.clientY - 30) + 'px';
+  document.body.appendChild(f); setTimeout(() => f.remove(), 800);
+  haptic('light'); render(); save();
+});
+
+/* ---------- главный цикл ---------- */
+let last = performance.now(), acc = 0;
+function loop(now){
+  const dt = Math.min((now - last) / 1000, .25); last = now;
+  angle = (angle + vel * dt) % 360;
+  vel += (BASE - vel) * Math.min(dt * 2.2, 1);
+  stripes.setAttribute('transform', `rotate(${angle.toFixed(2)} 100 100)`);
+  S.coins += perSec() * dt;
+  S.energy = Math.min(maxE(), S.energy + regen() * dt);
+  acc += dt; if (acc > .25) { acc = 0; render(); save(); }
+  requestAnimationFrame(loop);
+}
+buildShop(); render(); load();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
